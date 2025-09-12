@@ -1,0 +1,95 @@
+services:
+  # --- FRONTEND (Vue.js) BUILD ---
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    command: ["npm", "run", "build"]
+    networks:
+      - app-network
+
+  # --- BACKEND (PHP API) ---
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    volumes:
+      - ./backend:/var/www/html
+    environment:
+      - DB_HOST=db
+      - DB_DATABASE=metalmonitor.ru
+      - DB_USERNAME=wert
+      - DB_PASSWORD=wert
+    depends_on:
+      - db
+    networks:
+      - app-network
+
+  # --- NGINX (Serve frontend + API proxy) ---
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ./backend:/var/www/html
+      - ./frontend/dist:/var/www/html/frontend
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      - app-network
+
+  db:
+    image: mysql:8
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: wert
+      MYSQL_DATABASE: metalmonitor.ru
+      MYSQL_USER: wert
+      MYSQL_PASSWORD: wert
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - app-network
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    restart: always
+    ports:
+      - "8080:80"
+    environment:
+      PMA_HOST: db
+      PMA_USER: wert
+      PMA_PASSWORD: wert
+    depends_on:
+      - db
+    networks:
+      - app-network
+
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    networks:
+      - app-network
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    environment:
+      RABBITMQ_DEFAULT_USER: wert
+      RABBITMQ_DEFAULT_PASS: wert
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+
+volumes:
+  mysql_data:
