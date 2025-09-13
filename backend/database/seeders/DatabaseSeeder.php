@@ -1,6 +1,11 @@
 <?php
 
 namespace Database\Seeders;
+use Database\Seeders\ShopSeeder;
+use Database\Seeders\CategorySeeder;
+use Database\Seeders\UpdateLinkSeeder;
+use Database\Seeders\PhpQuerySelectorSeeder;
+use Database\Seeders\StandardProductParameterSeeder;
 
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -13,11 +18,10 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        $this->call(ShopSeeder::class);
+        $this->call(CategorySeeder::class);
+        $this->call(UpdateLinkSeeder::class);
+        $this->call(PhpQuerySelectorSeeder::class);
+        $this->call(StandardProductParameterSeeder::class);
     }
 }
