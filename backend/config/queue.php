@@ -30,9 +30,27 @@ return [
 
     'connections' => [
 
-        'sync' => [
-            'driver' => 'sync',
+        'rabbitmq' => [
+    'driver' => 'rabbitmq',
+    'queue' => env('RABBITMQ_QUEUE', 'default'),
+    'connection' => PhpAmqpLib\Connection\AMQPStreamConnection::class,
+    'hosts' => [
+        [
+            'host' => env('RABBITMQ_HOST', 'rabbitmq'),
+            'port' => env('RABBITMQ_PORT', 5672),
+            'user' => env('RABBITMQ_USER', 'wert'),
+            'password' => env('RABBITMQ_PASSWORD', 'wert'),
+            'vhost' => env('RABBITMQ_VHOST', '/'),
         ],
+    ],
+    'options' => [
+        'ssl_options' => [
+            'verify_peer' => false,
+            'verify_peer_name' => false,
+        ],
+    ],
+    'worker' => env('RABBITMQ_WORKER', 'default'),
+],
 
         'database' => [
             'driver' => 'database',
