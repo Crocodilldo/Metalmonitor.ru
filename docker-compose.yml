@@ -44,7 +44,7 @@ services:
       - app-network
 
   db:
-    image: mysql:8
+    image: mysql:latest
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: wert
@@ -78,7 +78,7 @@ services:
       - app-network
 
   rabbitmq:
-    image: rabbitmq:3-management
+    image: rabbitmq:4.1-management-alpine
     environment:
       RABBITMQ_DEFAULT_USER: wert
       RABBITMQ_DEFAULT_PASS: wert

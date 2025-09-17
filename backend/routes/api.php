@@ -10,3 +10,5 @@ Route::get('/user', function (Request $request) {
 Route::get('/ping', function () {
     return response()->json(['message' => 'API is working!']);
 });
+
+Route::get('/test', 'App\Http\Controllers\TestController@test');
