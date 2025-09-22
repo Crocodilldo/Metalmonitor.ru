@@ -76,28 +76,58 @@ services:
       - "6379:6379"
     networks:
       - app-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
 
   rabbitmq:
     image: rabbitmq:4.1-management-alpine
-    environment:
-      RABBITMQ_DEFAULT_USER: wert
-      RABBITMQ_DEFAULT_PASS: wert
     ports:
       - "5672:5672"
       - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: wert
+      RABBITMQ_DEFAULT_PASS: wert
     networks:
       - app-network
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
 
   queue-worker:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    command: php artisan queue:work rabbitmq --sleep=3 --tries=3
+    command: php artisan queue:work rabbitmq --queue=default --tries=3 --verbose
     volumes:
       - ./backend:/var/www/html
     depends_on:
       - backend
       - rabbitmq
+      - redis
+    restart: unless-stopped
+    networks:
+      - app-network
+
+
+  scheduler:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: laravel-scheduler
+    working_dir: /var/www/html
+    command: php artisan schedule:work
+    volumes:
+      - ./backend:/var/www/html
+    depends_on:
+      - backend
+      - queue-worker
+      - redis
     networks:
       - app-network
 

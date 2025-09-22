@@ -12,7 +12,7 @@ class GetContentService
 
     public function getSiteContent(?string $url)
     { 
-    if ($url===null) {
+    if (empty($url)) {
         Log::error('Fetch site content failed', [
             'url' => $url,
             'message' => 'URL is empty',

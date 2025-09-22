@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Services\ParsingServices\GetContentService;
+use App\Models\PhpQuerySelector;
+use App\Models\Product;
+use Symfony\Component\DomCrawler\Crawler;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Log;
+
 
 class TestController extends Controller
 {
-    public function test(GetContentService $service){
-        $result=$service->getSiteContent(null);
-        return var_dump($result);
-        
-    }
+    public function test() {}
 }

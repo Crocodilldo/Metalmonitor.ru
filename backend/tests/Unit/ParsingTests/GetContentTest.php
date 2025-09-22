@@ -37,4 +37,3 @@ class GetContentTest extends TestCase
 }
     }
 }
-//TODO: complete tests
