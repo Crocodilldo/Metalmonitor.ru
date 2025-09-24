@@ -5,7 +5,6 @@ namespace App\Jobs;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use App\Services\ParsingServices\ParsingService;
-use App\Services\ParsingServices\GetContentService;
 use Illuminate\Support\Facades\Log;
 
 class ParsingProductsJob implements ShouldQueue
@@ -30,15 +29,13 @@ class ParsingProductsJob implements ShouldQueue
      */
     public function handle(
         ParsingService $parsing_service,
-        GetContentService $service,
     ): void {
         $starttime = microtime(true);
         $parsing_service->parseProducts(
-            $service,
             $this->url,
             $this->shop_id,
             $this->category_id
         );
-        Log::info('Parsing finished in: ' . microtime(true) - $starttime . ' sec.');
+        Log::info('Parsing finished in: ' . (microtime(true) - $starttime) . ' sec.');
     }
 }

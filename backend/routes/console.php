@@ -9,5 +9,5 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
 
-
-Schedule::command('dispatch_parsing_jobs')->dailyAt('21:00');
+//Dispatch jobs for update product table in database
+Schedule::command('dispatch_parsing_jobs')->dailyAt('15:23');

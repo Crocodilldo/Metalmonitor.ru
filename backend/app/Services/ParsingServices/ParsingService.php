@@ -3,97 +3,44 @@
 namespace App\Services\ParsingServices;
 
 use App\Models\PhpQuerySelector;
-use App\Models\Product;
-use Symfony\Component\DomCrawler\Crawler;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
-
-
+use App\Services\ParsingServices\ProductInfoExtractorService;
+use App\Services\ParsingServices\ProductParameterNormalizerService;
+use App\Services\ParsingServices\ProductBuilderService;
+use App\Services\ParsingServices\ProductStoreService;
 
 class ParsingService
 {
-    public function parseProducts(
-        $service,
-        $url,
-        $shop_id,
-        $category_id
+    public function __construct(
+        private GetContentService $fetcher,
+        private ProductInfoExtractorService $extractor,
+        private ProductParameterNormalizerService $normalizer,
+        private ProductBuilderService $builder,
+        private ProductStoreService $store,
+    ) {}
 
-    ): void {
-        Log::info('Parsing started', [
-            'url' => $url,
-            'shop_id' => $shop_id,
-        ]);
-        $site_content = $service->getSiteContent($url);
-        if (empty($site_content)) return;
-        $selectors = PhpQuerySelector::where('shop_id', $shop_id)->get()->toArray();
+    public function parseProducts($url, $shopId, $categoryId): void
+    {
+        Log::info('Parsing started', compact('url', 'shopId'));
 
-        // Получение информации о продукте
-        $products_information = [];
-        $site_content->filter($selectors[0]['product_information'])->each(function (Crawler $node) use (&$products_information) {
-            $products_information[] = trim($node->text());
-        });
-
-        //Присвоение параметров продукта
-        foreach ($products_information as $product_for_parsing) {
-            $product_for_parsing = str_replace(['х', 'x', 'х', '/'], '*', $product_for_parsing);
-            $product_for_parsing = str_replace('мм', '', $product_for_parsing);
-            $product_for_parsing = str_replace('.', ',', $product_for_parsing);
-            preg_match(
-                '/([0-9]+)?,?([0-9]+)?\*?([0-9]+)?,?([0-9]+)?\*?([0-9]+),?([0-9]+)?/',
-                $product_for_parsing,
-                $received_parameter
-            );
-            $received_parameter = trim($received_parameter[0], ' \,');
-            $product_parameter = explode('*', $received_parameter);
-            $product_parameter = str_replace(',', '.', $product_parameter);
-            $product_parameter  = array_map('floatval',  $product_parameter);
-            rsort($product_parameter, SORT_NUMERIC);
-            $products_parameters[] = implode('*', $product_parameter);
+        $crawler = $this->fetcher->getSiteContent($url);
+        if (!$crawler) {
+            return;
         }
+        $selectors = PhpQuerySelector::where('shop_id', $shopId)->firstOrFail();
 
-        //получение цены
-        $prices = $site_content
-            ->filter($selectors[0]['price'])
-            ->each(function (Crawler $node) {
-                $text = trim($node->text());
-                return $text !== ''
-                    ? (float) str_replace(' ', '', $text)
-                    : '-';
-            });
+        $information = $this->extractor->extractInformation($crawler, $selectors->product_information);
+        $parameters  = $this->normalizer->normalize($information);
+        $prices      = $this->extractor->extractPrices($crawler, $selectors->price);
+        $urls        = $this->extractor->extractUrls($crawler, $selectors->url);
 
-        //получение ссылки на товар
-        $product_url = $site_content
-            ->filter($selectors[0]['url'])
-            ->each(function (Crawler $node) {
-                return $node->attr('href');
-            });
+        $products = $this->builder->build($information, $parameters, $prices, $urls, $shopId, $categoryId);
 
-        unset($site_content);
-
-        //создание массива товаров для добавления в БД
-        for ($i = 0; $i < count($product_url); $i++) {
-            $product[$i] = [
-                'name' => $products_information[$i],
-                'category_id' => $category_id,
-                'shop_id' => $shop_id,
-                'parameter' => $products_parameters[$i],
-                'price' => $prices[$i],
-                'url' => $product_url[$i],
-                'updated_at' => Carbon::now()->toDateTimeString(),
-            ];
-        }
-        if (empty($product)) {
+        if (empty($products)) {
             Log::info('No parsing result on: ' . $url);
             return;
         }
-        //запись результатов в БД
-        foreach ($product as $pr) {
-            Product::updateOrCreate(
-                ['url' => $pr['url']],
-                $pr
-            );
-        }
-        Log::info($product);
+        $this->store->save($products);
+        Log::info('Parsing finished');
     }
 }
-    //TODO: Decompose this service

@@ -3,7 +3,6 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Schedule;
 use App\Models\UpdateLink;
 use Illuminate\Support\Facades\Log;
 use App\Jobs\ParsingProductsJob;
@@ -30,16 +29,15 @@ class DispatchParsingJobsCommand extends Command
     public function handle()
     {
 
-            $links = UpdateLink::all(['url', 'shop_id', 'category_id']);
+        $links = UpdateLink::select('url', 'shop_id', 'category_id')->get();
 
-            foreach ($links as $link) {
-                if (empty($link->url)) {
-                    Log::warning('UpdateLink with empty url', ['id' => $link->id ?? null]);
-                    continue;
-                }
-                ParsingProductsJob::dispatch($link->url, $link->shop_id, $link->category_id)
-                    ->onQueue('default');
-            }
+        foreach ($links as $link) {
+            ParsingProductsJob::dispatch(
+                $link->url,
+                $link->shop_id,
+                $link->category_id
+            )->onQueue('default');
+        }
         $this->info('All parsing jobs dispatched.');
     }
 }
