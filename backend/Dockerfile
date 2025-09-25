@@ -10,6 +10,24 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/html
 
+# Добавляем wait-for-it.sh внутрь образа
+COPY <<'EOF' /usr/local/bin/wait-for-it.sh
+#!/usr/bin/env bash
+HOST="$1"
+PORT="$2"
+shift 2
+CMD="$@"
+
+echo "Waiting for $HOST:$PORT..."
+while ! (echo > /dev/tcp/$HOST/$PORT) >/dev/null 2>&1; do
+  sleep 1
+done
+echo "$HOST:$PORT is available — starting command"
+exec $CMD
+EOF
+
+RUN chmod +x /usr/local/bin/wait-for-it.sh
+
 # Устанавливаем зависимости проекта (если есть composer.json)
 RUN if [ -f "composer.json" ]; then composer install --no-interaction --prefer-dist --optimize-autoloader; fi
 

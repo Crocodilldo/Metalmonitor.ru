@@ -103,14 +103,12 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    command: php artisan queue:work rabbitmq --queue=default --tries=3 --verbose
+    command: wait-for-it.sh rabbitmq 5672 -- php artisan queue:work rabbitmq --queue=default --sleep=3 --tries=3
     volumes:
       - ./backend:/var/www/html
     depends_on:
       - backend
       - rabbitmq
-      - redis
-    restart: unless-stopped
     networks:
       - app-network
 
