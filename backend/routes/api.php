@@ -12,3 +12,5 @@ Route::get('/ping', function () {
 });
 
 Route::get('/test', 'App\Http\Controllers\TestController@test');
+
+Route::get('/products', 'App\Http\Controllers\ApiControllers\ProductController@index');

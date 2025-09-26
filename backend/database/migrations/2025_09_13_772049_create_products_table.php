@@ -19,7 +19,7 @@ return new class extends Migration
             $table->bigInteger('shop_id')->unsigned();
             $table->foreign('shop_id')->references('id')->on('shops');
             $table->string('parameter')->nullable();
-            $table->string('price')->nullable();
+            $table->float('price')->nullable();
             $table->string('url')->unique();            
             $table->timestamps();
         });

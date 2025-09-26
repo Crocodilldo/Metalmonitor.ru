@@ -28,8 +28,10 @@ EOF
 
 RUN chmod +x /usr/local/bin/wait-for-it.sh
 
+
 # Устанавливаем зависимости проекта (если есть composer.json)
-RUN if [ -f "composer.json" ]; then composer install --no-interaction --prefer-dist --optimize-autoloader; fi
-
+RUN if [ -f "composer.json" ]; then \
+        composer install --no-interaction --prefer-dist --optimize-autoloader && \
+        composer require predis/predis --no-interaction; \
+    fi
 CMD ["php-fpm"]
-

@@ -39,7 +39,7 @@ class ProductInfoExtractorServiceTest extends TestCase
     {
         $result = $this->extractor->extractPrices($this->crawler, '.price');
 
-        $this->assertEquals([123.0, '-'], $result);
+        $this->assertEquals([123.0, 0], $result);
     }
 
     public function test_extracts_urls(): void

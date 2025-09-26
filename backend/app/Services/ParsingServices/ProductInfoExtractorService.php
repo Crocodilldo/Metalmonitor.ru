@@ -17,7 +17,7 @@ class ProductInfoExtractorService
     {
         return $crawler->filter($selector)->each(function (Crawler $node) {
             $text = trim($node->text());
-            return $text !== '' ? (float) str_replace(' ', '', $text) : '-';
+            return $text !== '' ? (float) str_replace(' ', '', $text) : 0;
         });
     }
 
