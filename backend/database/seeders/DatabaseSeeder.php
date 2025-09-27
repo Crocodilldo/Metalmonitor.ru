@@ -1,6 +1,7 @@
 <?php
 
 namespace Database\Seeders;
+
 use Database\Seeders\ShopSeeder;
 use Database\Seeders\CategorySeeder;
 use Database\Seeders\UpdateLinkSeeder;
@@ -23,5 +24,6 @@ class DatabaseSeeder extends Seeder
         $this->call(UpdateLinkSeeder::class);
         $this->call(PhpQuerySelectorSeeder::class);
         $this->call(StandardProductParameterSeeder::class);
+        $this->call(UserSeeder::class);
     }
 }

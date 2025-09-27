@@ -11,6 +11,11 @@ Route::get('/ping', function () {
     return response()->json(['message' => 'API is working!']);
 });
 
-Route::get('/test', 'App\Http\Controllers\TestController@test');
+Route::middleware('auth:sanctum')->get('/test', 'App\Http\Controllers\TestController@test');
+
 
 Route::get('/products', 'App\Http\Controllers\ApiControllers\ProductController@index');
+
+Route::post('/login', 'App\Http\Controllers\ApiControllers\AuthController@login');
+
+Route::middleware('auth:sanctum')->post('/logout', 'App\Http\Controllers\ApiControllers\AuthController@logout');
