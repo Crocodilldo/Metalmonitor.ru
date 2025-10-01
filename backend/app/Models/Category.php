@@ -9,6 +9,8 @@ class Category extends Model
 {
     use HasFactory;
 
+    protected $fillable = ['name'];
+
     public function updateLink()
     {
         return $this->hasMany(UpdateLink::class);

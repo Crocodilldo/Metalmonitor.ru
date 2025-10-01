@@ -18,4 +18,12 @@ Route::get('/products', 'App\Http\Controllers\ApiControllers\ProductController@i
 
 Route::post('/login', 'App\Http\Controllers\ApiControllers\AuthController@login');
 
-Route::middleware('auth:sanctum')->post('/logout', 'App\Http\Controllers\ApiControllers\AuthController@logout');
+
+Route::prefix('/admin')->middleware('auth:sanctum')->group(function () {
+    Route::post('/logout', 'App\Http\Controllers\ApiControllers\AuthController@logout');
+
+    Route::apiResource('/shops', 'App\Http\Controllers\ApiControllers\AdminControllers\ShopController');
+    Route::apiResource('/updateLinks', 'App\Http\Controllers\ApiControllers\AdminControllers\UpdateLinkController');
+    Route::apiResource('/categories', 'App\Http\Controllers\ApiControllers\AdminControllers\CategoryController');
+    Route::apiResource('/products', 'App\Http\Controllers\ApiControllers\AdminControllers\ProductController');
+});

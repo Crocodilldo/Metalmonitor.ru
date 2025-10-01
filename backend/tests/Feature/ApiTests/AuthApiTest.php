@@ -15,8 +15,6 @@ class AuthApiTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-
-        // Создаем администратора в базе
         $this->admin = User::factory()->create([
             'name' => 'admin',
             'email' => 'admin@example.com',
@@ -55,15 +53,10 @@ class AuthApiTest extends TestCase
         $token = $this->admin->createToken('api-token')->plainTextToken;
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $token,
-        ])->postJson('/api/logout');
+        ])->postJson('/api/admin/logout');
 
         $response->assertStatus(200)
             ->assertExactJson(['message' => 'Logged out']);
-
-        // Обновляем модель, чтобы подтянуть токены из БД
-        $this->admin->refresh();
-
-        // Проверяем, что токены удалены
         $this->assertCount(0, $this->admin->tokens);
     }
 }

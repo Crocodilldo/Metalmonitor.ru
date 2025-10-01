@@ -11,36 +11,36 @@ use App\Services\ParsingServices\ProductStoreService;
 
 class ParsingService
 {
-    public function __construct(
-        private GetContentService $fetcher,
-        private ProductInfoExtractorService $extractor,
-        private ProductParameterNormalizerService $normalizer,
-        private ProductBuilderService $builder,
-        private ProductStoreService $store,
-    ) {}
-
-    public function parseProducts($url, $shopId, $categoryId): void
-    {
+    public function parseProducts(
+        $url,
+        $shopId,
+        $categoryId,
+        GetContentService $fetcher,
+        ProductInfoExtractorService $extractor,
+        ProductParameterNormalizerService $normalizer,
+        ProductBuilderService $builder,
+        ProductStoreService $store
+    ): void {
         Log::info('Parsing started', compact('url', 'shopId'));
 
-        $crawler = $this->fetcher->getSiteContent($url);
+        $crawler = $fetcher->getSiteContent($url);
         if (!$crawler) {
             return;
         }
         $selectors = PhpQuerySelector::where('shop_id', $shopId)->firstOrFail();
 
-        $information = $this->extractor->extractInformation($crawler, $selectors->product_information);
-        $parameters  = $this->normalizer->normalize($information);
-        $prices      = $this->extractor->extractPrices($crawler, $selectors->price);
-        $urls        = $this->extractor->extractUrls($crawler, $selectors->url);
+        $information = $extractor->extractInformation($crawler, $selectors->product_information);
+        $parameters  = $normalizer->normalize($information);
+        $prices      = $extractor->extractPrices($crawler, $selectors->price);
+        $urls        = $extractor->extractUrls($crawler, $selectors->url);
 
-        $products = $this->builder->build($information, $parameters, $prices, $urls, $shopId, $categoryId);
+        $products = $builder->build($information, $parameters, $prices, $urls, $shopId, $categoryId);
 
         if (empty($products)) {
             Log::info('No parsing result on: ' . $url);
             return;
         }
-        $this->store->save($products);
+        $store->save($products);
         Log::info('Parsing finished');
     }
 }
