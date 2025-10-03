@@ -24,7 +24,7 @@ class ProductResource extends JsonResource
             'parameter' => $this->parameter,
             'price' => $this->price,
             'url' => $this->url,
-            'updated_at' => $this->updated_at->toDateTimeString()
+            'updated_at' => $this->updated_at
         ];
     }
 }

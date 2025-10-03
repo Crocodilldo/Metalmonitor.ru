@@ -26,4 +26,5 @@ Route::prefix('/admin')->middleware('auth:sanctum')->group(function () {
     Route::apiResource('/updateLinks', 'App\Http\Controllers\ApiControllers\AdminControllers\UpdateLinkController');
     Route::apiResource('/categories', 'App\Http\Controllers\ApiControllers\AdminControllers\CategoryController');
     Route::apiResource('/products', 'App\Http\Controllers\ApiControllers\AdminControllers\ProductController');
+    Route::apiResource('/selectors', 'App\Http\Controllers\ApiControllers\AdminControllers\QuerySelectorController');
 });

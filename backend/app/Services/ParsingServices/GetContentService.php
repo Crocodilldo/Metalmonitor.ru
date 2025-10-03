@@ -11,14 +11,14 @@ class GetContentService
 {
 
     public function getSiteContent(?string $url)
-    { 
-    if (empty($url)) {
-        Log::error('Fetch site content failed', [
-            'url' => $url,
-            'message' => 'URL is empty',
-        ]);
-        return null;
-    }
+    {
+        if (empty($url)) {
+            Log::error('Fetch site content failed', [
+                'url' => $url,
+                'message' => 'URL is empty',
+            ]);
+            return null;
+        }
         try {
             $ch = curl_init($url);
 

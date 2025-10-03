@@ -21,9 +21,9 @@ class Shop extends Model
         return $this->hasMany(UpdateLink::class);
     }
 
-    public function phpQuerySelector()
+    public function querySelector()
     {
-        return $this->hasMany(PhpQuerySelector::class);
+        return $this->hasMany(QuerySelector::class);
     }
 
     public function product()
@@ -35,7 +35,7 @@ class Shop extends Model
     {
         static::deleting(function ($shop) {
             $shop->updateLink()->delete();
-            $shop->phpQuerySelector()->delete();
+            $shop->querySelector()->delete();
             $shop->product()->delete();
         });
     }

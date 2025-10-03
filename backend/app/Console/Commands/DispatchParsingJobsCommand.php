@@ -28,7 +28,6 @@ class DispatchParsingJobsCommand extends Command
      */
     public function handle()
     {
-
         $links = UpdateLink::select('url', 'shop_id', 'category_id')->get();
 
         foreach ($links as $link) {

@@ -6,7 +6,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
-class PhpQuerySelectorSeeder extends Seeder
+class QuerySelectorSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -36,7 +36,7 @@ class PhpQuerySelectorSeeder extends Seeder
             ]
             ];
             foreach ($data as $selector)
-            DB::table('php_query_selectors')->insert([
+            DB::table('query_selectors')->insert([
                 'shop_id'=>$selector['shop_id'],
                 'product_information'=>$selector['product_information'],
                 'price'=>$selector['price'],

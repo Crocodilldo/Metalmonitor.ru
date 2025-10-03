@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('php_query_selectors', function (Blueprint $table) {
+        Schema::create('query_selectors', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('shop_id')->unsigned();
             $table->foreign('shop_id')->references('id')->on('shops');
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('php_query_selectors');
+        Schema::dropIfExists('query_selectors');
     }
 };
