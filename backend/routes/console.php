@@ -10,4 +10,5 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 //Dispatch jobs for update product table in database
-Schedule::command('dispatch_parsing_jobs')->dailyAt('15:23');
+Schedule::command('dispatch_parsing_jobs')->dailyAt('21:00');
+Schedule::command('make_pricelist')->monthlyOn(1, '10:00');
