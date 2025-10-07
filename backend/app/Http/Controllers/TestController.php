@@ -2,21 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\ParsingServices\ParsingService;
-use App\Models\UpdateLink;
-use Illuminate\Support\Facades\Auth;
+use App\Actions\PriceListScandirAction;
+use App\Actions\ProductsExelExportAction;
+use App\Http\Controllers\Controller;
+use Carbon\Carbon;
 
 
 class TestController extends Controller
 {
-    public function test()
+    public function test(ProductsExelExportAction $products_exel_export_action, 
+                            Carbon $carbon,
+                            PriceListScandirAction $scandir)
     {
-        if (Auth::check()) {
-            // Пользователь авторизован, выполнить действия для авторизованных пользователей
-            return 'Пользователь авторизован!';
-        } else {
-            // Пользователь не авторизован, выполнить действия для неавторизованных пользователей
-            return 'Пользователь не авторизован.';
-        }
+       return $products_exel_export_action->handle($carbon, $scandir);
     }
 }

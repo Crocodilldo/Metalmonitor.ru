@@ -11,7 +11,7 @@ Route::get('/ping', function () {
     return response()->json(['message' => 'API is working!']);
 });
 
-Route::middleware('auth:sanctum')->get('/test', 'App\Http\Controllers\TestController@test');
+Route::get('/test', 'App\Http\Controllers\TestController@test');
 
 
 Route::get('/products', 'App\Http\Controllers\ApiControllers\ProductController@index');
