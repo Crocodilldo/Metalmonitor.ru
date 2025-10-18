@@ -27,10 +27,12 @@ class ProductsResponseService
         }
 
         if ($request->filled('search')) {
-            $query->where('name', 'like', '%' . $request->input('search') . '%');
+            $query->where('name', 'like', '%' . $request->input('search') . '%')
+                    ->orWhere('name','like', '%' . str_replace('х', '*', $request->input('search') . '%'))
+                    ->orWhere('name','like', '%' . str_replace('*', 'х', $request->input('search') . '%'));
         }
 
-        $products = $query->paginate(50);
+        $products = $query->get();
 
         return ProductResource::collection($products);
     }

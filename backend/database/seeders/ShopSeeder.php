@@ -28,7 +28,7 @@ class ShopSeeder extends Seeder
 
             [
                 'name' => 'Металлхозторг',
-                'url' => 'http://www.mxt22.ru/',
+                'url' => 'http://www.mxt22.ru',
             ]
         ];
 
